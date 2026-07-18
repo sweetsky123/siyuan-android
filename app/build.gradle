@@ -21,14 +21,29 @@ android {
     namespace 'org.b3log.siyuan'
     compileSdk = 36
 
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            universalApk true
+        }
+    }
+
     // 2. 配置 APK 输出文件名
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
             def buildType = variant.buildType.name
             def flavorName = variant.flavorName
             def versionName = variant.versionName
+            def abi = output.filters.find { it.filterType == com.android.build.OutputFile.ABI }?.identifier
 
             def fileName = "siyuan-${versionName}-${flavorName}-${buildType}"
+            if (abi != null) {
+                fileName += "-${abi}"
+            } else if (buildType == "release") {
+                fileName += "-universal"
+            }
 
             if (buildType != "release") {
                 def formattedDate = new Date().format('yyyyMMddHHmmss')
@@ -69,7 +84,7 @@ android {
 
             minifyEnabled false
 
-            resValue "string", "app_name", "SiYuan-Debug"
+            resValue "string", "app_name", "思源笔记-Debug"
             resValue "string", "app_package_name", "org.b3log.siyuan.debug"
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
