@@ -1,8 +1,6 @@
-name: 每日同步上游
+name: 同步上游（手动触发）
 
 on:
-  schedule:
-    - cron: "0 2 * * *"
   workflow_dispatch:
 
 permissions:
